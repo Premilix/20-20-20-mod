@@ -1,0 +1,39 @@
+{
+	"schemaVersion": 1,
+	"id": "eyestrain-mod",
+	"version": "${version}",
+	"name": "20 20 20 Mod",
+	"description": "This mod helps you follow the 20 20 20 (20 second rest every 20 minutes) rule to reduce eye strain.",
+	"authors": [
+		"Premilix"
+	],
+	"contact": {
+		"homepage" : "https://github.com/premilix/20-20-20-mod",
+		"sources": "https://github.com/premilix/20-20-20-mod",
+		"issues" : "https://github.com/premilix/20-20-20-mod/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/eyestrain-mod/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"main": [
+			"com.premilix.eyestrainmod.EyestrainMod"
+		],
+		"client": [
+			"com.premilix.eyestrainmod.client.EyestrainModClient"
+		]
+	},
+	"mixins": [
+		"eyestrain-mod.mixins.json",
+		{
+			"config": "eyestrain-mod.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.2",
+		"minecraft": "~26.1.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
