@@ -1,8 +1,14 @@
 # 20 20 20 Mod
 
-## Setup
+## Description
 
-For setup instructions, please see the [Fabric Documentation page](https://docs.fabricmc.net/develop/getting-started/creating-a-project#setting-up) related to the IDE that you are using.
+This simple mod helps you follow the 20 20 20 rule for reducing eyestrain while playing Minecraft! It reminds you to relax your eyes by looking into the distance for 20 seconds every 20 minutes.
+
+## Planned features
+
+- configurable parameters (break time and time between breaks)
+- HUD elements
+- sound alerts to guide the user
 
 ## License
 
