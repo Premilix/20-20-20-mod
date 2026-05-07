@@ -20,7 +20,8 @@
 			"com.premilix.eyestrainmod.EyestrainMod"
 		],
 		"client": [
-			"com.premilix.eyestrainmod.client.EyestrainModClient"
+			"com.premilix.eyestrainmod.client.EyestrainModClient",
+			"com.premilix.eyestrainmod.client.keymapping.EyestrainModKeyMappingsClient"
 		]
 	},
 	"mixins": [

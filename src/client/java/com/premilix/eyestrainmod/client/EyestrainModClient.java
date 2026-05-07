@@ -5,11 +5,16 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.NotNull;
 
 public class EyestrainModClient implements ClientModInitializer {
-	private int ticksUntilRest = 200;
+	public static final int REST_TICKS = 400;
+	public static final int TICKS_BETWEEN_BREAK = 200;
+
+	private int ticksUntilRest = TICKS_BETWEEN_BREAK;
 	private int restTicksRemaining = 0;
 	private int displayedSecondCount = 0;
 
@@ -34,7 +39,7 @@ public class EyestrainModClient implements ClientModInitializer {
                 client.player.sendSystemMessage(Component.literal(restMessage));
 				displayedSecondCount = newSecondCount;
 
-				client.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.NOTE_BLOCK_PLING.value(), 1.0F, 0.5F));
+				notifyPlayer(client, SoundEvents.NOTE_BLOCK_PLING.value(), 0.5F);
 			}
 
 			restTicksRemaining--;
@@ -43,20 +48,24 @@ public class EyestrainModClient implements ClientModInitializer {
 				if (client.player != null) {
 					client.player.sendSystemMessage(Component.literal("[20 20 20 Mod] Eye break over. Good job!"));
 				}
-				ticksUntilRest = 200;
-				// play sound
-				client.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.NOTE_BLOCK_CHIME.value(), 1.0F, 1.0F));
+				ticksUntilRest = TICKS_BETWEEN_BREAK;
+
+				notifyPlayer(client, SoundEvents.NOTE_BLOCK_CHIME.value(), 1.0F);
 			}
 		}
 		else {
 			ticksUntilRest--;
 
 			if (ticksUntilRest == 0) {
-				restTicksRemaining = 400;
-				// play sound
-				client.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.NOTE_BLOCK_CHIME.value(), 1.0F, 1.0F));
+				restTicksRemaining = REST_TICKS;
+
+				notifyPlayer(client, SoundEvents.NOTE_BLOCK_CHIME.value(), 1.0F);
 
 			}
 		}
+	}
+
+	private void notifyPlayer(@NotNull Minecraft client, SoundEvent sound, float volume) {
+		client.getSoundManager().play(SimpleSoundInstance.forUI(sound, 1.0F, volume));
 	}
 }

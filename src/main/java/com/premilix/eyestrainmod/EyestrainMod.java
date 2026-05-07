@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 public class EyestrainMod implements ModInitializer {
 	public static final String MOD_ID = "eyestrain-mod";
+	public static final String MOD_VERSION = "1.0.0";
 
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
