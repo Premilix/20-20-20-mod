@@ -21,13 +21,10 @@ public class EyestrainModClient implements ClientModInitializer {
     @Override
 	public void onInitializeClient() {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			// TODO: add key mappings
 			if (client.isPaused() || client.player == null) return;
 
 			manageTicks(client);
 		});
-
-		// TODO: add HUD elements for break reminder instead of messages
 	}
 
 	private void manageTicks(Minecraft client) {
@@ -35,6 +32,7 @@ public class EyestrainModClient implements ClientModInitializer {
 			int newSecondCount = Mth.ceil(((double) restTicksRemaining / 20));
 
 			if (client.player != null && newSecondCount != displayedSecondCount) {
+				// TODO: add HUD elements for break reminder instead of messages
                 String restMessage = String.format("[20 20 20 Mod] You should rest your eyes for another: %ds", newSecondCount);
                 client.player.sendSystemMessage(Component.literal(restMessage));
 				displayedSecondCount = newSecondCount;
