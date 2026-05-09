@@ -1,5 +1,6 @@
 package com.premilix.eyestrainmod.client;
 
+import com.premilix.eyestrainmod.client.config.Config;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
@@ -11,8 +12,8 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 public class EyestrainModClient implements ClientModInitializer {
-	public static final int REST_TICKS = 400;
-	public static final int TICKS_BETWEEN_BREAK = 200;
+	public static int REST_TICKS = Config.getInstance().getRestSeconds() * 20;
+	public static int TICKS_BETWEEN_BREAK = Config.getInstance().getMinutesBetweenBreak() * 60 * 20;
 
 	private int ticksUntilRest = TICKS_BETWEEN_BREAK;
 	private int restTicksRemaining = 0;
@@ -20,6 +21,8 @@ public class EyestrainModClient implements ClientModInitializer {
 
     @Override
 	public void onInitializeClient() {
+		Config.load();
+
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (client.isPaused() || client.player == null) return;
 
@@ -65,5 +68,10 @@ public class EyestrainModClient implements ClientModInitializer {
 
 	private void notifyPlayer(@NotNull Minecraft client, SoundEvent sound, float volume) {
 		client.getSoundManager().play(SimpleSoundInstance.forUI(sound, 1.0F, volume));
+	}
+
+	public static void reloadConfigParameters() {
+		TICKS_BETWEEN_BREAK = Config.getInstance().getMinutesBetweenBreak() * 60 * 20;
+		REST_TICKS = Config.getInstance().getRestSeconds() * 20;
 	}
 }

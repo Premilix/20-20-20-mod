@@ -2,6 +2,7 @@ package com.premilix.eyestrainmod.client.keymapping;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.premilix.eyestrainmod.EyestrainMod;
+import com.premilix.eyestrainmod.client.config.Config;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
@@ -24,6 +25,15 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
             )
     );
 
+    KeyMapping testKey = KeyMappingHelper.registerKeyMapping(
+            new KeyMapping(
+                    "key.eyestrain-mod.test_key",
+                    InputConstants.Type.KEYSYM,
+                    GLFW.GLFW_KEY_J,
+                    CATEGORY
+            )
+    );
+
 
     @Override
     public void onInitializeClient() {
@@ -31,8 +41,15 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
            while(openConfigKey.consumeClick()) {
                if (client.player != null) {
                    client.player.sendSystemMessage(Component.literal("[20 20 20] Mod: Config key pressed."));
+                   Config.save();
                }
            }
+
+            while(testKey.consumeClick()) {
+                if (client.player != null) {
+                    Config.load();
+                }
+            }
         });
     }
 }
