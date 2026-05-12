@@ -15,12 +15,10 @@ public class ConfigScreen extends Screen {
 
     @Override
     protected void init() {
-        Button buttonWidget = Button.builder(Component.literal("Test Button!"), _ -> {
-            this.minecraft.getToastManager().addToast(
-                    SystemToast.multiline(this.minecraft, SystemToast.SystemToastId.PERIODIC_NOTIFICATION,
-                            Component.nullToEmpty("Hello world!"), Component.nullToEmpty("This is an example toast!"))
-            );
-        }).bounds(40, 40, 120, 20).build();
+        Button buttonWidget = Button.builder(Component.literal("Test Button!"), _ -> this.minecraft.getToastManager().addToast(
+                SystemToast.multiline(this.minecraft, SystemToast.SystemToastId.PERIODIC_NOTIFICATION,
+                        Component.nullToEmpty("Hello world!"), Component.nullToEmpty("This is an example toast!"))
+        )).bounds(40, 40, 120, 20).build();
 
         this.addRenderableWidget(buttonWidget);
     }
