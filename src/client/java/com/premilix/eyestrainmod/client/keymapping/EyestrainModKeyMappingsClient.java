@@ -3,6 +3,7 @@ package com.premilix.eyestrainmod.client.keymapping;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.premilix.eyestrainmod.EyestrainMod;
 import com.premilix.eyestrainmod.client.config.Config;
+import com.premilix.eyestrainmod.client.hud.ConfigScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
@@ -39,9 +40,10 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
     public void onInitializeClient() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
            while(openConfigKey.consumeClick()) {
-               if (client.player != null) {
-                   client.player.sendSystemMessage(Component.literal("[20 20 20] Mod: Config key pressed."));
-                   Config.save();
+               if (client.player != null && !(client.screen instanceof ConfigScreen)) {
+                   client.setScreen(
+                           new ConfigScreen(Component.literal("20 20 20 Mod Config"))
+                   );
                }
            }
 

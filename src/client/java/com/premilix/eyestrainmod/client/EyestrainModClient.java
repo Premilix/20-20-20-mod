@@ -1,5 +1,6 @@
 package com.premilix.eyestrainmod.client;
 
+import com.premilix.eyestrainmod.EyestrainMod;
 import com.premilix.eyestrainmod.client.config.Config;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -15,9 +16,9 @@ public class EyestrainModClient implements ClientModInitializer {
 	public static int REST_TICKS = Config.getInstance().getRestSeconds() * 20;
 	public static int TICKS_BETWEEN_BREAK = Config.getInstance().getMinutesBetweenBreak() * 60 * 20;
 
-	private int ticksUntilRest = TICKS_BETWEEN_BREAK;
-	private int restTicksRemaining = 0;
-	private int displayedSecondCount = 0;
+	private static int ticksUntilRest = TICKS_BETWEEN_BREAK;
+	private static int restTicksRemaining = 0;
+	private static int displayedSecondCount = 0;
 
     @Override
 	public void onInitializeClient() {
@@ -73,5 +74,8 @@ public class EyestrainModClient implements ClientModInitializer {
 	public static void reloadConfigParameters() {
 		TICKS_BETWEEN_BREAK = Config.getInstance().getMinutesBetweenBreak() * 60 * 20;
 		REST_TICKS = Config.getInstance().getRestSeconds() * 20;
+		if (ticksUntilRest > 0) {
+			ticksUntilRest = TICKS_BETWEEN_BREAK;
+		}
 	}
 }
