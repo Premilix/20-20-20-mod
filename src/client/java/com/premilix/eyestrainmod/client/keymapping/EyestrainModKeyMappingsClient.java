@@ -40,9 +40,13 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
     public void onInitializeClient() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
            while(openConfigKey.consumeClick()) {
-               if (client.player != null && !(client.screen instanceof ConfigScreen)) {
+               // avoid enabling narrator by checking Control keybind
+               boolean isControlPressed = GLFW.glfwGetKey(client.getWindow().handle(), GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS
+                       || GLFW.glfwGetKey(client.getWindow().handle(), GLFW.GLFW_KEY_RIGHT_CONTROL) == GLFW.GLFW_PRESS;
+
+               if (!isControlPressed && !(client.screen instanceof ConfigScreen)) {
                    client.setScreen(
-                           new ConfigScreen(Component.literal("20 20 20 Mod Config"))
+                           new ConfigScreen(Component.literal("20 20 20 Mod Config"), client.screen)
                    );
                }
            }
