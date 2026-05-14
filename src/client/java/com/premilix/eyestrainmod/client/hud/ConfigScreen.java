@@ -1,14 +1,24 @@
 package com.premilix.eyestrainmod.client.hud;
 
+import com.premilix.eyestrainmod.client.config.Config;
+import com.premilix.eyestrainmod.client.hud.widgets.BetweenRestSlider;
 import com.premilix.eyestrainmod.client.hud.widgets.RestSlider;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
+import net.minecraft.client.gui.layouts.LayoutSettings;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.util.List;
+
 public class ConfigScreen extends Screen {
+
+    private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
 
     @Nullable
     private final Screen parent;
@@ -20,32 +30,88 @@ public class ConfigScreen extends Screen {
 
     @Override
     protected void init() {
-//        Button buttonWidget = Button.builder(Component.literal("Test Button!"), _ -> this.minecraft.getToastManager().addToast(
-//                SystemToast.multiline(this.minecraft, SystemToast.SystemToastId.PERIODIC_NOTIFICATION,
-//                        Component.nullToEmpty("Hello world!"), Component.nullToEmpty("This is an example toast!"))
-//        )).bounds(40, 40, 120, 20).build();
-//
-//
-//
-//        this.addRenderableWidget(buttonWidget);
+        this.layout.addToHeader(new StringWidget(this.title, this.font));
 
-        Checkbox checkboxWidget = Checkbox.builder(Component.literal("Play sounds to help guide the break"), this.font).pos(40, 80).build();
-        RestSlider restSliderWidget = new RestSlider(40, 120, 100, 20, 20);
+        LinearLayout settings = LinearLayout.vertical().spacing(10);
 
-        this.addRenderableWidget(checkboxWidget);
-        this.addRenderableWidget(restSliderWidget);
+        for (LinearLayout row : this.generateSettings()) {
+            settings.addChild(row);
+        }
+        this.layout.addToContents(settings);
+
+        LinearLayout footer = LinearLayout.horizontal().spacing(5);
+
+        footer.addChild(Button.builder(Component.literal("Reset"), _ -> this.onClose(false))
+                .tooltip(Tooltip.create(Component.literal("Reset to defaults")))
+                .build());
+        footer.addChild(Button.builder(Component.literal("Cancel"), _ -> this.onClose(false))
+                .tooltip(Tooltip.create(Component.literal("Exit the configuration without saving")))
+                .build());
+        footer.addChild(Button.builder(Component.literal("Save"), _ -> this.onClose(true))
+                .tooltip(Tooltip.create(Component.literal("Save and exit the configuration")))
+                .build());
+
+        this.layout.addToFooter(footer);
+
+        this.layout.visitWidgets(this::addRenderableWidget);
+        this.layout.arrangeElements();
     }
 
-    @Override
-    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
-        super.extractRenderState(graphics, mouseX, mouseY, a);
+    private void resetDefaults() {
+        this.layout.visitWidgets(widget -> {
+            // TODO: figure out resetting
+        });
+    }
 
-//        graphics.text(this.font, "Test button", 40, 40 - this.font.lineHeight - 10, 0xFFFFFFFF, true);
-        graphics.text(this.font, "Rest duration", 40, 120 - this.font.lineHeight - 10, 0xFFFFFFFF, true);
+    private void onClose(boolean save) {
+        if (save) {
+            // TODO: save to config
+        }
+        this.onClose();
     }
 
     @Override
     public void onClose() {
         this.minecraft.setScreen(this.parent);
+    }
+
+    @Override
+    protected void repositionElements() {
+        this.layout.arrangeElements();
+    }
+
+    /**
+     * Creates the individual mod setting rows
+     * @return a list of LinearLayouts containing the mod settings
+     */
+    private List<LinearLayout> generateSettings() {
+        LinearLayout row1 = LinearLayout.horizontal().spacing(5);
+
+        StringWidget restLabel = new StringWidget(Component.literal("Rest duration in seconds"), this.font);
+        int configSeconds = Config.getInstance().getRestSeconds();
+        RestSlider restSliderWidget = new RestSlider(0, 0, 100, 20, configSeconds);
+
+        row1.addChild(restLabel, LayoutSettings::alignVerticallyMiddle);
+        row1.addChild(restSliderWidget);
+
+        LinearLayout row2 = LinearLayout.horizontal().spacing(5);
+
+        StringWidget betweenRestLabel = new StringWidget(Component.literal("Minutes between break"), this.font);
+        int configMinutes = Config.getInstance().getMinutesBetweenBreak();
+        BetweenRestSlider betweenRestSliderWidget = new BetweenRestSlider(0, 0, 100, 20, configMinutes);
+
+        row2.addChild(betweenRestLabel, LayoutSettings::alignVerticallyMiddle);
+        row2.addChild(betweenRestSliderWidget);
+
+        LinearLayout row3 = LinearLayout.horizontal().spacing(5);
+
+        StringWidget soundLabelWidget = new StringWidget(Component.literal("Play sounds to help guide the break"), this.font);
+        boolean configSound = Config.getInstance().isSoundNotifications();
+        Checkbox checkboxWidget = Checkbox.builder(Component.empty(), this.font).selected(configSound).build();
+
+        row3.addChild(soundLabelWidget, LayoutSettings::alignVerticallyMiddle);
+        row3.addChild(checkboxWidget);
+
+        return List.of(row1, row2, row3);
     }
 }
