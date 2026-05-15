@@ -1,5 +1,6 @@
 package com.premilix.eyestrainmod.client.hud;
 
+import com.premilix.eyestrainmod.EyestrainMod;
 import com.premilix.eyestrainmod.client.config.Config;
 import com.premilix.eyestrainmod.client.hud.widgets.BetweenRestSlider;
 import com.premilix.eyestrainmod.client.hud.widgets.RestSlider;
@@ -18,7 +19,15 @@ import java.util.List;
 
 public class ConfigScreen extends Screen {
 
-    private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
+    private HeaderAndFooterLayout layout;
+
+    private int draftRestSeconds;
+    private int draftMinutesBetween;
+    private boolean draftSoundNotifications;
+
+    private RestSlider restSlider;
+    private BetweenRestSlider betweenRestSlider;
+    private Checkbox soundsCheckbox;
 
     @Nullable
     private final Screen parent;
@@ -26,10 +35,16 @@ public class ConfigScreen extends Screen {
     public ConfigScreen(Component title, @Nullable Screen parent) {
         super(title);
         this.parent = parent;
+
+        Config config = Config.getInstance();
+        this.draftRestSeconds = config.getRestSeconds();
+        this.draftMinutesBetween = config.getMinutesBetweenBreak();
+        this.draftSoundNotifications = config.isSoundNotifications();
     }
 
     @Override
     protected void init() {
+        this.layout = new HeaderAndFooterLayout(this);
         this.layout.addToHeader(new StringWidget(this.title, this.font));
 
         LinearLayout settings = LinearLayout.vertical().spacing(10);
@@ -41,7 +56,7 @@ public class ConfigScreen extends Screen {
 
         LinearLayout footer = LinearLayout.horizontal().spacing(5);
 
-        footer.addChild(Button.builder(Component.literal("Reset"), _ -> this.onClose(false))
+        footer.addChild(Button.builder(Component.literal("Reset"), _ -> this.resetDefaults())
                 .tooltip(Tooltip.create(Component.literal("Reset to defaults")))
                 .build());
         footer.addChild(Button.builder(Component.literal("Cancel"), _ -> this.onClose(false))
@@ -58,16 +73,25 @@ public class ConfigScreen extends Screen {
     }
 
     private void resetDefaults() {
-        this.layout.visitWidgets(widget -> {
-            // TODO: figure out resetting
-        });
+        this.draftRestSeconds = 20;
+        this.draftMinutesBetween = 20;
+        this.draftSoundNotifications = true;
+        this.rebuildWidgets();
     }
 
     private void onClose(boolean save) {
         if (save) {
-            // TODO: save to config
+            this.updateDraftValues();
+            Config.updateConfigFromUI(this.draftRestSeconds, this.draftMinutesBetween, this.draftSoundNotifications);
+            EyestrainMod.LOGGER.info("Saved config with new values {} seconds, {} minutes, {} sounds", this.draftRestSeconds, this.draftMinutesBetween, this.draftSoundNotifications);
         }
         this.onClose();
+    }
+
+    private void updateDraftValues() {
+        this.draftRestSeconds = this.restSlider.getSeconds();
+        this.draftMinutesBetween = this.betweenRestSlider.getMinutes();
+        this.draftSoundNotifications = this.soundsCheckbox.selected();
     }
 
     @Override
@@ -88,29 +112,26 @@ public class ConfigScreen extends Screen {
         LinearLayout row1 = LinearLayout.horizontal().spacing(5);
 
         StringWidget restLabel = new StringWidget(Component.literal("Rest duration in seconds"), this.font);
-        int configSeconds = Config.getInstance().getRestSeconds();
-        RestSlider restSliderWidget = new RestSlider(0, 0, 100, 20, configSeconds);
+        this.restSlider = new RestSlider(0, 0, 100, 20, draftRestSeconds);
 
         row1.addChild(restLabel, LayoutSettings::alignVerticallyMiddle);
-        row1.addChild(restSliderWidget);
+        row1.addChild(this.restSlider);
 
         LinearLayout row2 = LinearLayout.horizontal().spacing(5);
 
         StringWidget betweenRestLabel = new StringWidget(Component.literal("Minutes between break"), this.font);
-        int configMinutes = Config.getInstance().getMinutesBetweenBreak();
-        BetweenRestSlider betweenRestSliderWidget = new BetweenRestSlider(0, 0, 100, 20, configMinutes);
+        this.betweenRestSlider = new BetweenRestSlider(0, 0, 100, 20, draftMinutesBetween);
 
         row2.addChild(betweenRestLabel, LayoutSettings::alignVerticallyMiddle);
-        row2.addChild(betweenRestSliderWidget);
+        row2.addChild(this.betweenRestSlider);
 
         LinearLayout row3 = LinearLayout.horizontal().spacing(5);
 
         StringWidget soundLabelWidget = new StringWidget(Component.literal("Play sounds to help guide the break"), this.font);
-        boolean configSound = Config.getInstance().isSoundNotifications();
-        Checkbox checkboxWidget = Checkbox.builder(Component.empty(), this.font).selected(configSound).build();
+        this.soundsCheckbox = Checkbox.builder(Component.empty(), this.font).selected(draftSoundNotifications).build();
 
         row3.addChild(soundLabelWidget, LayoutSettings::alignVerticallyMiddle);
-        row3.addChild(checkboxWidget);
+        row3.addChild(this.soundsCheckbox);
 
         return List.of(row1, row2, row3);
     }

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class EyestrainModClient implements ClientModInitializer {
 	public static int REST_TICKS = Config.getInstance().getRestSeconds() * 20;
 	public static int TICKS_BETWEEN_BREAK = Config.getInstance().getMinutesBetweenBreak() * 60 * 20;
+	public static boolean SOUND_NOTIFICATIONS = Config.getInstance().isSoundNotifications();
 
 	private static int ticksUntilRest = TICKS_BETWEEN_BREAK;
 	private static int restTicksRemaining = 0;
@@ -67,7 +68,9 @@ public class EyestrainModClient implements ClientModInitializer {
 	}
 
 	private void notifyPlayer(@NotNull Minecraft client, SoundEvent sound, float volume) {
-		client.getSoundManager().play(SimpleSoundInstance.forUI(sound, 1.0F, volume));
+		if (SOUND_NOTIFICATIONS) {
+			client.getSoundManager().play(SimpleSoundInstance.forUI(sound, 1.0F, volume));
+		}
 	}
 
 	public static void reloadConfigParameters() {
@@ -76,5 +79,8 @@ public class EyestrainModClient implements ClientModInitializer {
 		if (ticksUntilRest > 0) {
 			ticksUntilRest = TICKS_BETWEEN_BREAK;
 		}
+
+		SOUND_NOTIFICATIONS = Config.getInstance().isSoundNotifications();
+
 	}
 }

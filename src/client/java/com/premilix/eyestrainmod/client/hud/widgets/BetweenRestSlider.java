@@ -24,6 +24,10 @@ public class BetweenRestSlider extends AbstractSliderButton {
         return (clamped - 1) / 59.0;
     }
 
+    public int getMinutes() {
+        return interpolate(this.value);
+    }
+
     @Override
     public boolean keyPressed(final KeyEvent event) {
         if (!event.isSelection() && this.canChangeValue) {
@@ -44,8 +48,9 @@ public class BetweenRestSlider extends AbstractSliderButton {
         this.setMessage(computeMessage(this.value));
     }
 
+    /**
+     * Doesn't do anything. Saving is handled in {@code ConfigScreen.java} only upon clicking `save`.
+     */
     @Override
-    protected void applyValue() {
-        // TODO: update config parameter by updating a field in the screen
-    }
+    protected void applyValue() {}
 }

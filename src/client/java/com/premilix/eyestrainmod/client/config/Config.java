@@ -37,6 +37,11 @@ public class Config {
         return INSTANCE;
     }
 
+    public static void updateConfigFromUI(int restSeconds, int minutesBetweenBreak, boolean soundNotifications) {
+        INSTANCE = new Config(restSeconds, minutesBetweenBreak, soundNotifications);
+        save();
+    }
+
     public int getRestSeconds() {
         return restSeconds;
     }
