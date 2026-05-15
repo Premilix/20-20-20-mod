@@ -2,13 +2,12 @@
 
 ## Description
 
-This simple mod helps you follow the 20 20 20 rule for reducing eyestrain while playing Minecraft! It reminds you to relax your eyes by looking into the distance for 20 seconds every 20 minutes.
+This simple mod helps you follow the 20 20 20 rule for reducing eyestrain while playing Minecraft! It reminds you to relax your eyes by looking into the distance for 20 seconds every 20 minutes (configurable).
 
 ## Planned features
 
-- configurable parameters (break time and time between breaks)
-- HUD elements
-- sound alerts to guide the user
+- Have HUD elements to guide the user's break instead of chat messages.
+- Allow starting the break only when pressing a keybind or ignoring/snoozing.
 
 ## License
 
