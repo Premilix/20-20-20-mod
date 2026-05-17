@@ -3,6 +3,7 @@ package com.premilix.eyestrainmod.client;
 import com.premilix.eyestrainmod.client.config.Config;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
@@ -10,6 +11,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class EyestrainModClient implements ClientModInitializer {
 	public static int REST_TICKS = Config.getInstance().getRestSeconds() * 20;
@@ -19,6 +22,8 @@ public class EyestrainModClient implements ClientModInitializer {
 	private static int ticksUntilRest = TICKS_BETWEEN_BREAK;
 	private static int restTicksRemaining = 0;
 	private static int displayedSecondCount = 0;
+
+	private static boolean breakInitiated = false;
 
     @Override
 	public void onInitializeClient() {
@@ -33,6 +38,18 @@ public class EyestrainModClient implements ClientModInitializer {
 
 	private void manageTicks(Minecraft client) {
 		if (restTicksRemaining > 0) {
+			if (!breakInitiated) {
+				if (client.player != null) {
+
+					Component restMessage = Component.literal("[20 20 20 Mod] You can start the break now by pressing '")
+							.append(Objects.requireNonNull(KeyMapping.get("key.eyestrain-mod.break_key")).getTranslatedKeyMessage())
+							.append(" to rest your eyes.");
+					client.player.sendSystemMessage(restMessage);
+
+				}
+				return;
+			}
+
 			int newSecondCount = Mth.ceil(((double) restTicksRemaining / 20));
 
 			if (client.player != null && newSecondCount != displayedSecondCount) {
@@ -51,6 +68,7 @@ public class EyestrainModClient implements ClientModInitializer {
 					client.player.sendSystemMessage(Component.literal("[20 20 20 Mod] Eye break over. Good job!"));
 				}
 				ticksUntilRest = TICKS_BETWEEN_BREAK;
+				breakInitiated = false;
 
 				notifyPlayer(client, SoundEvents.NOTE_BLOCK_CHIME.value(), 1.0F);
 			}
@@ -82,5 +100,24 @@ public class EyestrainModClient implements ClientModInitializer {
 
 		SOUND_NOTIFICATIONS = Config.getInstance().isSoundNotifications();
 
+	}
+
+	public static void toggleBreak() {
+		if (breakInitiated) {
+			breakInitiated = false;
+			restTicksRemaining = 0;
+			ticksUntilRest = TICKS_BETWEEN_BREAK;
+		}
+		else if (ticksUntilRest == 0 && restTicksRemaining > 0) {
+			breakInitiated = true;
+		}
+	}
+
+	public static void snoozeBreak() {
+		if (!breakInitiated && ticksUntilRest == 0 && restTicksRemaining > 0) {
+			// TODO: break snoozed alert
+			restTicksRemaining = 0;
+			ticksUntilRest = TICKS_BETWEEN_BREAK;
+		}
 	}
 }

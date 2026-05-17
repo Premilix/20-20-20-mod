@@ -1,4 +1,6 @@
 {
   "key.category.eyestrain-mod.eyestrain_mod_keybinds": "20 20 20 Mod",
-  "key.eyestrain-mod.open_config": "Open Config"
+  "key.eyestrain-mod.open_config": "Open Config",
+  "key.eyestrain-mod.break_key": "Toggle Break",
+  "key.eyestrain-mod.snooze_key": "Snooze Break"
 }

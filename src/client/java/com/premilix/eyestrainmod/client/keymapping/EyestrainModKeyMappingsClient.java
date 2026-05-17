@@ -2,7 +2,7 @@ package com.premilix.eyestrainmod.client.keymapping;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.premilix.eyestrainmod.EyestrainMod;
-import com.premilix.eyestrainmod.client.config.Config;
+import com.premilix.eyestrainmod.client.EyestrainModClient;
 import com.premilix.eyestrainmod.client.hud.ConfigScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -21,16 +21,25 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
             new KeyMapping(
                     "key.eyestrain-mod.open_config",
                     InputConstants.Type.KEYSYM,
-                    GLFW.GLFW_KEY_B,
+                    GLFW.GLFW_KEY_J,
                     CATEGORY
             )
     );
 
-    KeyMapping testKey = KeyMappingHelper.registerKeyMapping(
+    KeyMapping breakKey = KeyMappingHelper.registerKeyMapping(
             new KeyMapping(
-                    "key.eyestrain-mod.test_key",
+                    "key.eyestrain-mod.break_key",
                     InputConstants.Type.KEYSYM,
-                    GLFW.GLFW_KEY_J,
+                    GLFW.GLFW_KEY_Y,
+                    CATEGORY
+            )
+    );
+
+    KeyMapping snoozeKey = KeyMappingHelper.registerKeyMapping(
+            new KeyMapping(
+                    "key.eyestrain-mod.snooze_key",
+                    InputConstants.Type.KEYSYM,
+                    GLFW.GLFW_KEY_N,
                     CATEGORY
             )
     );
@@ -51,10 +60,12 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
                }
            }
 
-            while(testKey.consumeClick()) {
-                if (client.player != null) {
-                    Config.load();
-                }
+            while(breakKey.consumeClick()) {
+                EyestrainModClient.toggleBreak();
+            }
+
+            while(snoozeKey.consumeClick()) {
+                EyestrainModClient.snoozeBreak();
             }
         });
     }
