@@ -1,12 +1,17 @@
 package com.premilix.eyestrainmod.client;
 
+import com.premilix.eyestrainmod.EyestrainMod;
 import com.premilix.eyestrainmod.client.config.Config;
+import com.premilix.eyestrainmod.client.hud.HudPrompt;
+import com.premilix.eyestrainmod.client.hud.HudPromptState;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -29,9 +34,12 @@ public class EyestrainModClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		Config.load();
 
+		HudElementRegistry.addLast(Identifier.fromNamespaceAndPath(EyestrainMod.MOD_ID, "hud_prompt"), HudPrompt.render());
+
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (client.isPaused() || client.player == null) return;
 
+			HudPromptState.tick();
 			manageTicks(client);
 		});
 	}
@@ -41,10 +49,10 @@ public class EyestrainModClient implements ClientModInitializer {
 			if (!breakInitiated) {
 				if (client.player != null) {
 
-					Component restMessage = Component.literal("[20 20 20 Mod] You can start the break now by pressing '")
+					Component restMessage = Component.literal("You can start the break now by pressing '")
 							.append(Objects.requireNonNull(KeyMapping.get("key.eyestrain-mod.break_key")).getTranslatedKeyMessage())
 							.append(" to rest your eyes.");
-					client.player.sendSystemMessage(restMessage);
+					if (!Objects.equals(HudPromptState.getContent(), restMessage)) HudPromptState.showPrompt(restMessage, 5);
 
 				}
 				return;
@@ -54,8 +62,8 @@ public class EyestrainModClient implements ClientModInitializer {
 
 			if (client.player != null && newSecondCount != displayedSecondCount) {
 				// TODO: add HUD elements for break reminder instead of messages
-                String restMessage = String.format("[20 20 20 Mod] You should rest your eyes for another: %ds", newSecondCount);
-                client.player.sendSystemMessage(Component.literal(restMessage));
+                Component restMessage = Component.literal(String.format("You should rest your eyes for another: %ds", newSecondCount));
+                if (!Objects.equals(HudPromptState.getContent(), restMessage)) HudPromptState.showPrompt(restMessage, 1);
 				displayedSecondCount = newSecondCount;
 
 				notifyPlayer(client, SoundEvents.NOTE_BLOCK_PLING.value(), 0.5F);
@@ -64,9 +72,8 @@ public class EyestrainModClient implements ClientModInitializer {
 			restTicksRemaining--;
 
 			if (restTicksRemaining == 0) {
-				if (client.player != null) {
-					client.player.sendSystemMessage(Component.literal("[20 20 20 Mod] Eye break over. Good job!"));
-				}
+				HudPromptState.showPrompt(Component.literal("Eye break over. Good job!"), 3);
+
 				ticksUntilRest = TICKS_BETWEEN_BREAK;
 				breakInitiated = false;
 
