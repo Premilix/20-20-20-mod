@@ -48,11 +48,12 @@ public class EyestrainModClient implements ClientModInitializer {
 		if (restTicksRemaining > 0) {
 			if (!breakInitiated) {
 				if (client.player != null) {
-
-					Component restMessage = Component.literal("You can start the break now by pressing '")
+					Component restMessage = Component.literal("You can start the eye break now!\n")
 							.append(Objects.requireNonNull(KeyMapping.get("key.eyestrain-mod.break_key")).getTranslatedKeyMessage())
-							.append(" to rest your eyes.");
-					if (!Objects.equals(HudPromptState.getContent(), restMessage)) HudPromptState.showPrompt(restMessage, 5);
+							.append(": START      ")
+							.append(Objects.requireNonNull(KeyMapping.get("key.eyestrain-mod.snooze_key")).getTranslatedKeyMessage())
+							.append(": SKIP");
+					if (!Objects.equals(HudPromptState.getContent(), restMessage)) HudPromptState.showPrompt(restMessage, 5, true, true);
 
 				}
 				return;
@@ -61,9 +62,13 @@ public class EyestrainModClient implements ClientModInitializer {
 			int newSecondCount = Mth.ceil(((double) restTicksRemaining / 20));
 
 			if (client.player != null && newSecondCount != displayedSecondCount) {
-				// TODO: add HUD elements for break reminder instead of messages
-                Component restMessage = Component.literal(String.format("You should rest your eyes for another: %ds", newSecondCount));
-                if (!Objects.equals(HudPromptState.getContent(), restMessage)) HudPromptState.showPrompt(restMessage, 1);
+                Component restMessage = Component.literal(String.format("Rest your eyes for another: %ds", newSecondCount))
+						.append("\n")
+						.append(Objects.requireNonNull(KeyMapping.get("key.eyestrain-mod.break_key")).getTranslatedKeyMessage())
+						.append(": CANCEL");
+
+                HudPromptState.showPrompt(restMessage, 1, !HudPromptState.isActive(), false);
+
 				displayedSecondCount = newSecondCount;
 
 				notifyPlayer(client, SoundEvents.NOTE_BLOCK_PLING.value(), 0.5F);
@@ -72,7 +77,7 @@ public class EyestrainModClient implements ClientModInitializer {
 			restTicksRemaining--;
 
 			if (restTicksRemaining == 0) {
-				HudPromptState.showPrompt(Component.literal("Eye break over. Good job!"), 3);
+				HudPromptState.showPrompt(Component.literal("Eye break over. Good job!"), 5, false, true);
 
 				ticksUntilRest = TICKS_BETWEEN_BREAK;
 				breakInitiated = false;
@@ -114,6 +119,8 @@ public class EyestrainModClient implements ClientModInitializer {
 			breakInitiated = false;
 			restTicksRemaining = 0;
 			ticksUntilRest = TICKS_BETWEEN_BREAK;
+
+			HudPromptState.showPrompt(Component.literal("Eye break cancelled."), 5, false, true);
 		}
 		else if (ticksUntilRest == 0 && restTicksRemaining > 0) {
 			breakInitiated = true;
@@ -122,7 +129,10 @@ public class EyestrainModClient implements ClientModInitializer {
 
 	public static void snoozeBreak() {
 		if (!breakInitiated && ticksUntilRest == 0 && restTicksRemaining > 0) {
-			// TODO: break snoozed alert
+			Component message = Component.literal("You have snoozed this eye break.");
+
+			HudPromptState.showPrompt(message, 5, !HudPromptState.isActive(), true);
+
 			restTicksRemaining = 0;
 			ticksUntilRest = TICKS_BETWEEN_BREAK;
 		}
