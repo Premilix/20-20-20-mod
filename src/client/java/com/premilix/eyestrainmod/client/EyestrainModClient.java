@@ -4,6 +4,7 @@ import com.premilix.eyestrainmod.EyestrainMod;
 import com.premilix.eyestrainmod.client.config.Config;
 import com.premilix.eyestrainmod.client.hud.HudPrompt;
 import com.premilix.eyestrainmod.client.hud.HudPromptState;
+import com.premilix.eyestrainmod.client.hud.widgets.HudIndicator;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
@@ -35,6 +36,7 @@ public class EyestrainModClient implements ClientModInitializer {
 		Config.load();
 
 		HudElementRegistry.addLast(Identifier.fromNamespaceAndPath(EyestrainMod.MOD_ID, "hud_prompt"), HudPrompt.render());
+		HudElementRegistry.addLast(Identifier.fromNamespaceAndPath(EyestrainMod.MOD_ID, "hud_indicator"), HudIndicator.render());
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (client.isPaused() || client.player == null) return;
@@ -46,18 +48,7 @@ public class EyestrainModClient implements ClientModInitializer {
 
 	private void manageTicks(Minecraft client) {
 		if (restTicksRemaining > 0) {
-			if (!breakInitiated) {
-				if (client.player != null) {
-					Component restMessage = Component.literal("You can start the eye break now!\n")
-							.append(Objects.requireNonNull(KeyMapping.get("key.eyestrain-mod.break_key")).getTranslatedKeyMessage())
-							.append(": START      ")
-							.append(Objects.requireNonNull(KeyMapping.get("key.eyestrain-mod.snooze_key")).getTranslatedKeyMessage())
-							.append(": SKIP");
-					if (!Objects.equals(HudPromptState.getContent(), restMessage)) HudPromptState.showPrompt(restMessage, 5, true, true);
-
-				}
-				return;
-			}
+			if (!breakInitiated) return;
 
 			int newSecondCount = Mth.ceil(((double) restTicksRemaining / 20));
 
@@ -90,6 +81,15 @@ public class EyestrainModClient implements ClientModInitializer {
 
 			if (ticksUntilRest == 0) {
 				restTicksRemaining = REST_TICKS;
+
+				Component restMessage = Component.literal("You can start the eye break now!\n")
+						.append(Objects.requireNonNull(KeyMapping.get("key.eyestrain-mod.break_key")).getTranslatedKeyMessage())
+						.append(": START      ")
+						.append(Objects.requireNonNull(KeyMapping.get("key.eyestrain-mod.snooze_key")).getTranslatedKeyMessage())
+						.append(": SKIP");
+
+				if (!Objects.equals(HudPromptState.getContent(), restMessage)) HudPromptState.showPrompt(restMessage, 5, true, true);
+				HudIndicator.setVisible();
 
 				notifyPlayer(client, SoundEvents.NOTE_BLOCK_CHIME.value(), 1.0F);
 
@@ -124,6 +124,7 @@ public class EyestrainModClient implements ClientModInitializer {
 		}
 		else if (ticksUntilRest == 0 && restTicksRemaining > 0) {
 			breakInitiated = true;
+			HudIndicator.setInvisible();
 		}
 	}
 
@@ -132,6 +133,7 @@ public class EyestrainModClient implements ClientModInitializer {
 			Component message = Component.literal("You have snoozed this eye break.");
 
 			HudPromptState.showPrompt(message, 5, !HudPromptState.isActive(), true);
+			HudIndicator.setInvisible();
 
 			restTicksRemaining = 0;
 			ticksUntilRest = TICKS_BETWEEN_BREAK;
