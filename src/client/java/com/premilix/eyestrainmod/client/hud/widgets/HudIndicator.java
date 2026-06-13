@@ -38,7 +38,6 @@ public class HudIndicator {
                 totalTickProgress += tickDelta.getGameTimeDeltaPartialTick(false);
             }
 
-            // TODO: add fade in/out
             float scaleAmount = Mth.sin(totalTickProgress / 30F) / 5F + 1.2F;
 
             int screenWidth = graphics.guiWidth();
