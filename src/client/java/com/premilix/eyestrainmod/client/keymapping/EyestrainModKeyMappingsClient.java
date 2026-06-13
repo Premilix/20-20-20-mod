@@ -13,11 +13,11 @@ import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class EyestrainModKeyMappingsClient implements ClientModInitializer {
-    KeyMapping.Category CATEGORY = KeyMapping.Category.register(
+    public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(
             Identifier.fromNamespaceAndPath(EyestrainMod.MOD_ID, "eyestrain_mod_keybinds")
     );
 
-    KeyMapping openConfigKey = KeyMappingHelper.registerKeyMapping(
+    public static final KeyMapping OPEN_CONFIG_KEY = KeyMappingHelper.registerKeyMapping(
             new KeyMapping(
                     "key.eyestrain-mod.open_config",
                     InputConstants.Type.KEYSYM,
@@ -26,7 +26,7 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
             )
     );
 
-    KeyMapping breakKey = KeyMappingHelper.registerKeyMapping(
+    public static final KeyMapping BREAK_KEY = KeyMappingHelper.registerKeyMapping(
             new KeyMapping(
                     "key.eyestrain-mod.break_key",
                     InputConstants.Type.KEYSYM,
@@ -35,7 +35,7 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
             )
     );
 
-    KeyMapping snoozeKey = KeyMappingHelper.registerKeyMapping(
+    public static final KeyMapping SNOOZE_KEY = KeyMappingHelper.registerKeyMapping(
             new KeyMapping(
                     "key.eyestrain-mod.snooze_key",
                     InputConstants.Type.KEYSYM,
@@ -48,7 +48,7 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-           while(openConfigKey.consumeClick()) {
+           while(OPEN_CONFIG_KEY.consumeClick()) {
                // avoid enabling narrator by checking Control keybind
                boolean isControlPressed = GLFW.glfwGetKey(client.getWindow().handle(), GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS
                        || GLFW.glfwGetKey(client.getWindow().handle(), GLFW.GLFW_KEY_RIGHT_CONTROL) == GLFW.GLFW_PRESS;
@@ -60,11 +60,11 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
                }
            }
 
-            while(breakKey.consumeClick()) {
+            while(BREAK_KEY.consumeClick()) {
                 EyestrainModClient.toggleBreak();
             }
 
-            while(snoozeKey.consumeClick()) {
+            while(SNOOZE_KEY.consumeClick()) {
                 EyestrainModClient.snoozeBreak();
             }
         });
