@@ -2,5 +2,29 @@
   "key.category.eyestrain-mod.eyestrain_mod_keybinds": "20 20 20 Mod",
   "key.eyestrain-mod.open_config": "Open Config",
   "key.eyestrain-mod.break_key": "Toggle Break",
-  "key.eyestrain-mod.snooze_key": "Snooze Break"
+  "key.eyestrain-mod.skip_key": "Skip Break",
+
+  "eyestrain-mod.text.eye_break_over" : "Eye break over. Good job!",
+  "eyestrain-mod.text.rest_eyes_for" : "Rest your eyes for another: ",
+  "eyestrain-mod.text.var_seconds" : "%1$ss",
+  "eyestrain-mod.text.cancel" : ": CANCEL",
+  "eyestrain-mod.text.start_break" : "You can start the eye break now!\n",
+  "eyestrain-mod.text.start_for_key" : ": START    ",
+  "eyestrain-mod.text.skip_for_key" : ": SKIP",
+  "eyestrain-mod.text.break_skipped" : "You have skipped this eye break.",
+  "eyestrain-mod.text.break_cancelled" : "Eye break cancelled.",
+
+  "eyestrain-mod.config.title" : "20 20 20 Mod Config",
+  "eyestrain-mod.config.rest_seconds" : "Rest duration in seconds",
+  "eyestrain-mod.config.minutes_between_break" : "Minutes between break",
+  "eyestrain-mod.config.sound_notifications" : "Play sounds to help guide the break",
+  "eyestrain-mod.config.sounds" : "Sounds",
+
+  "eyestrain-mod.config.reset" : "Reset",
+  "eyestrain-mod.config.cancel" : "Cancel",
+  "eyestrain-mod.config.save" : "Save",
+
+  "eyestrain-mod.tooltip.reset_defaults" : "Reset to defaults",
+  "eyestrain-mod.tooltip.cancel" : "Exit the configuration without saving",
+  "eyestrain-mod.tooltip.save" : "Save and exit the configuration"
 }

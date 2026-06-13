@@ -58,25 +58,25 @@ public class ConfigScreen extends Screen {
         GridLayout grid = new GridLayout().columnSpacing(40).rowSpacing(10);
 
         // ROW 0
-        StringWidget restLabel = new StringWidget(Component.literal("Rest duration in seconds"), this.font);
+        StringWidget restLabel = new StringWidget(Component.translatable("eyestrain-mod.config.rest_seconds"), this.font);
         grid.addChild(restLabel, 0, 0, settings -> settings.alignHorizontallyLeft().alignVerticallyMiddle());
 
         this.restSlider = new RestSlider(0, 0, 100, 20, draftRestSeconds);
         grid.addChild(this.restSlider, 0, 1, LayoutSettings::alignHorizontallyRight);
 
         // ROW 1
-        StringWidget betweenRestLabel = new StringWidget(Component.literal("Minutes between break"), this.font);
+        StringWidget betweenRestLabel = new StringWidget(Component.translatable("eyestrain-mod.config.minutes_between_break"), this.font);
         grid.addChild(betweenRestLabel, 1, 0, settings -> settings.alignHorizontallyLeft().alignVerticallyMiddle());
 
         this.betweenRestSlider = new BetweenRestSlider(0, 0, 100, 20, draftMinutesBetween);
         grid.addChild(this.betweenRestSlider, 1, 1, LayoutSettings::alignHorizontallyRight);
 
         // ROW 2
-        StringWidget soundLabel = new StringWidget(Component.literal("Play sounds to help guide the break"), this.font);
+        StringWidget soundLabel = new StringWidget(Component.translatable("eyestrain-mod.config.sound_notifications"), this.font);
         grid.addChild(soundLabel, 2, 0, settings -> settings.alignHorizontallyLeft().alignVerticallyMiddle());
 
         this.soundsToggle = CycleButton.onOffBuilder(this.draftSoundNotifications)
-                .create(0, 0, 100, 20, Component.literal("Sounds"));
+                .create(0, 0, 100, 20, Component.translatable("eyestrain-mod.config.sounds"));
         grid.addChild(this.soundsToggle, 2, 1, LayoutSettings::alignHorizontallyRight);
 
         return grid;
@@ -85,14 +85,14 @@ public class ConfigScreen extends Screen {
     private @NonNull LinearLayout generateFooter() {
         LinearLayout footer = LinearLayout.horizontal().spacing(5);
 
-        footer.addChild(Button.builder(Component.literal("Reset"), _ -> this.resetDefaults())
-                .tooltip(Tooltip.create(Component.literal("Reset to defaults")))
+        footer.addChild(Button.builder(Component.translatable("eyestrain-mod.config.reset"), _ -> this.resetDefaults())
+                .tooltip(Tooltip.create(Component.translatable("eyestrain-mod.tooltip.reset_defaults")))
                 .build());
-        footer.addChild(Button.builder(Component.literal("Cancel"), _ -> this.onClose(false))
-                .tooltip(Tooltip.create(Component.literal("Exit the configuration without saving")))
+        footer.addChild(Button.builder(Component.translatable("eyestrain-mod.config.cancel"), _ -> this.onClose(false))
+                .tooltip(Tooltip.create(Component.translatable("eyestrain-mod.tooltip.cancel")))
                 .build());
-        footer.addChild(Button.builder(Component.literal("Save"), _ -> this.onClose(true))
-                .tooltip(Tooltip.create(Component.literal("Save and exit the configuration")))
+        footer.addChild(Button.builder(Component.translatable("eyestrain-mod.config.save"), _ -> this.onClose(true))
+                .tooltip(Tooltip.create(Component.translatable("eyestrain-mod.tooltip.save")))
                 .build());
         return footer;
     }

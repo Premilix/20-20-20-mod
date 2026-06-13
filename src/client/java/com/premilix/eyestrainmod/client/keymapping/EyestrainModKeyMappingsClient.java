@@ -35,9 +35,9 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
             )
     );
 
-    public static final KeyMapping SNOOZE_KEY = KeyMappingHelper.registerKeyMapping(
+    public static final KeyMapping SKIP_KEY = KeyMappingHelper.registerKeyMapping(
             new KeyMapping(
-                    "key.eyestrain-mod.snooze_key",
+                    "key.eyestrain-mod.skip_key",
                     InputConstants.Type.KEYSYM,
                     GLFW.GLFW_KEY_N,
                     CATEGORY
@@ -55,7 +55,7 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
 
                if (!isControlPressed && !(client.screen instanceof ConfigScreen)) {
                    client.setScreen(
-                           new ConfigScreen(Component.literal("20 20 20 Mod Config"), client.screen)
+                           new ConfigScreen(Component.translatable("eyestrain-mod.config.title"), client.screen)
                    );
                }
            }
@@ -64,8 +64,8 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
                 EyestrainModClient.toggleBreak();
             }
 
-            while(SNOOZE_KEY.consumeClick()) {
-                EyestrainModClient.snoozeBreak();
+            while(SKIP_KEY.consumeClick()) {
+                EyestrainModClient.skipBreak();
             }
         });
     }

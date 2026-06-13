@@ -21,10 +21,8 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 public class EyestrainModClient implements ClientModInitializer {
-	//	public static int REST_TICKS = Config.getInstance().getRestSeconds() * 20;
-	public static int REST_TICKS = 200;
-	public static int TICKS_BETWEEN_BREAK = 100;
-//	public static int TICKS_BETWEEN_BREAK = Config.getInstance().getMinutesBetweenBreak() * 60 * 20;
+	public static int REST_TICKS = Config.getInstance().getRestSeconds() * 20;
+	public static int TICKS_BETWEEN_BREAK = Config.getInstance().getMinutesBetweenBreak() * 60 * 20;
 	public static boolean SOUND_NOTIFICATIONS = Config.getInstance().isSoundNotifications();
 
 	private static int ticksUntilRest = TICKS_BETWEEN_BREAK;
@@ -35,7 +33,7 @@ public class EyestrainModClient implements ClientModInitializer {
 
     @Override
 	public void onInitializeClient() {
-//		Config.load();
+		Config.load();
 
 		HudElementRegistry.addLast(Identifier.fromNamespaceAndPath(EyestrainMod.MOD_ID, "hud_prompt"), HudPrompt.render());
 		HudElementRegistry.addLast(Identifier.fromNamespaceAndPath(EyestrainMod.MOD_ID, "hud_indicator"), HudIndicator.render());
@@ -57,11 +55,11 @@ public class EyestrainModClient implements ClientModInitializer {
 			if (client.player != null && newSecondCount != displayedSecondCount) {
 				MutableComponent breakKey = EyestrainModKeyMappingsClient.BREAK_KEY.getTranslatedKeyMessage().copy();
 
-                Component restMessage = Component.literal("Rest your eyes for another: ")
-						.append(Component.literal(newSecondCount + "s").withStyle(ChatFormatting.GREEN))
+                Component restMessage = Component.translatable("eyestrain-mod.text.rest_eyes_for")
+						.append(Component.translatable("eyestrain-mod.text.var_seconds", newSecondCount).withStyle(ChatFormatting.GREEN))
 						.append("\n")
 						.append(breakKey.withStyle(ChatFormatting.GOLD))
-						.append(": CANCEL");
+						.append(Component.translatable("eyestrain-mod.text.cancel"));
 
                 HudPromptState.showPrompt(restMessage, 1, !HudPromptState.isActive(), false);
 
@@ -73,7 +71,7 @@ public class EyestrainModClient implements ClientModInitializer {
 			restTicksRemaining--;
 
 			if (restTicksRemaining == 0) {
-				HudPromptState.showPrompt(Component.literal("Eye break over. Good job!"), 5, false, true);
+				HudPromptState.showPrompt(Component.translatable("eyestrain-mod.text.eye_break_over"), 5, false, true);
 
 				ticksUntilRest = TICKS_BETWEEN_BREAK;
 				breakInitiated = false;
@@ -88,13 +86,13 @@ public class EyestrainModClient implements ClientModInitializer {
 				restTicksRemaining = REST_TICKS;
 
 				MutableComponent breakKey = EyestrainModKeyMappingsClient.BREAK_KEY.getTranslatedKeyMessage().copy();
-				MutableComponent snoozeKey = EyestrainModKeyMappingsClient.SNOOZE_KEY.getTranslatedKeyMessage().copy();
+				MutableComponent skipKey = EyestrainModKeyMappingsClient.SKIP_KEY.getTranslatedKeyMessage().copy();
 
-				Component restMessage = Component.literal("You can start the eye break now!\n")
+				Component restMessage = Component.translatable("eyestrain-mod.text.start_break")
 						.append(breakKey.withStyle(ChatFormatting.GOLD))
-						.append(": START    ")
-						.append(snoozeKey.withStyle(ChatFormatting.GOLD))
-						.append(": SKIP");
+						.append(Component.translatable("eyestrain-mod.text.start_for_key"))
+						.append(skipKey.withStyle(ChatFormatting.GOLD))
+						.append(Component.translatable("eyestrain-mod.text.skip_for_key"));
 
 				HudPromptState.showPrompt(restMessage, 5, true, true);
 				HudIndicator.setVisible();
@@ -129,7 +127,7 @@ public class EyestrainModClient implements ClientModInitializer {
 			displayedSecondCount = 0;
 			ticksUntilRest = TICKS_BETWEEN_BREAK;
 
-			HudPromptState.showPrompt(Component.literal("Eye break cancelled."), 5, false, true);
+			HudPromptState.showPrompt(Component.translatable("eyestrain-mod.text.break_cancelled"), 5, false, true);
 		}
 		else if (ticksUntilRest == 0 && restTicksRemaining > 0) {
 			breakInitiated = true;
@@ -137,9 +135,9 @@ public class EyestrainModClient implements ClientModInitializer {
 		}
 	}
 
-	public static void snoozeBreak() {
+	public static void skipBreak() {
 		if (!breakInitiated && ticksUntilRest == 0 && restTicksRemaining > 0) {
-			Component message = Component.literal("You have snoozed this eye break.");
+			Component message = Component.translatable("eyestrain-mod.text.break_skipped");
 
 			HudPromptState.showPrompt(message, 5, !HudPromptState.isActive(), true);
 			HudIndicator.setInvisible();
