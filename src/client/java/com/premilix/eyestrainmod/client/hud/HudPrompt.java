@@ -23,14 +23,14 @@ public class HudPrompt {
             int screenHeight = graphics.guiHeight();
 
             // setup dimensions
-            int textWidth = 180;
-            int paddingX = 6;
-            int paddingY = 11;
-            int boxWidth = textWidth + (paddingX * 2);
+            int maxTextWidth = 180;
+            int paddingX = 7;
+            int paddingY = 10;
+            int boxWidth = maxTextWidth + (paddingX * 2);
 
-            List<FormattedCharSequence> lines = client.font.split(prompt, textWidth);
+            List<FormattedCharSequence> lines = client.font.split(prompt, maxTextWidth);
             int lineCount = Mth.absMax(lines.size(), 2);
-            int linePadding = 4;
+            int linePadding = 8;
             int boxHeight = lineCount * client.font.lineHeight + (lineCount - 1) * linePadding +  (paddingY * 2);
 
             // interpolate the X position based on progress
@@ -40,15 +40,37 @@ public class HudPrompt {
             // calculate fade
             float alpha = Mth.clamp(smoothedProgress, 0.0f, 1.0f);
 
-            int backgroundColor = ARGB.color(Math.min(alpha, 0.75f), 0x28344f);
-            int textColor = ARGB.color(alpha, 0xFFFFFF);
+            int backgroundColor = ARGB.color(Math.min(alpha, 0.75f), 0x28344f); // dark blue
+            int dividerColor = ARGB.color(alpha, 0x3EA6FF); // bright cyan
+            int textColor = ARGB.color(alpha, 0xFFFFFF); // white
 
 			graphics.fill(actualX, actualY, actualX + boxWidth, actualY + boxHeight, backgroundColor);
 
+            int dividerHeight = 2;
+            int dividerY = actualY + paddingY + client.font.lineHeight + linePadding/2;
+            graphics.fill(actualX, dividerY, actualX + boxWidth, dividerY + dividerHeight, dividerColor);
+
             int currentY = actualY + paddingY;
-            for (FormattedCharSequence line : lines) {
-                graphics.text(client.font, line, actualX + paddingX, currentY, textColor);
-                currentY += client.font.lineHeight + linePadding;
+
+            // centered text
+            FormattedCharSequence line = !lines.isEmpty() ? lines.getFirst() : FormattedCharSequence.EMPTY;
+            int textWidth = client.font.width(line);
+            int startX = actualX + (boxWidth - textWidth) / 2;
+
+            graphics.text(client.font, line, startX, currentY, textColor, false);
+
+            // right-aligned text
+            currentY += client.font.lineHeight + linePadding + dividerHeight + 1;
+            line = lines.size() > 1 ? lines.get(1) : FormattedCharSequence.EMPTY;
+            textWidth = client.font.width(line);
+            startX = actualX + boxWidth - textWidth - paddingX;
+
+            graphics.text(client.font, line, startX, currentY, textColor, false);
+
+            // left-aligned text
+            for (int i = 2; i < lines.size(); i++) {
+                currentY += client.font.lineHeight + linePadding / 2;
+                graphics.text(client.font, lines.get(i), actualX + paddingX, currentY, textColor, false);
             }
         };
     }

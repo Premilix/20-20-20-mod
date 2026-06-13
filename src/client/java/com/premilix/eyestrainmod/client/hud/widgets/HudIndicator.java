@@ -8,8 +8,6 @@ import net.minecraft.world.item.Items;
 import org.joml.Matrix3x2fStack;
 
 public class HudIndicator {
-    private static final float ANIM_DURATION_TICKS = 20.0f;
-
     private static boolean visible = false;
     private static float totalTickProgress = 0;
 

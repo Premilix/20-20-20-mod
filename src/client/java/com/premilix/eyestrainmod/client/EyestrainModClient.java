@@ -8,6 +8,7 @@ import com.premilix.eyestrainmod.client.hud.widgets.HudIndicator;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -21,8 +22,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class EyestrainModClient implements ClientModInitializer {
-	public static int REST_TICKS = Config.getInstance().getRestSeconds() * 20;
-	public static int TICKS_BETWEEN_BREAK = Config.getInstance().getMinutesBetweenBreak() * 60 * 20;
+	//	public static int REST_TICKS = Config.getInstance().getRestSeconds() * 20;
+	public static int REST_TICKS = 200;
+	public static int TICKS_BETWEEN_BREAK = 100;
+//	public static int TICKS_BETWEEN_BREAK = Config.getInstance().getMinutesBetweenBreak() * 60 * 20;
 	public static boolean SOUND_NOTIFICATIONS = Config.getInstance().isSoundNotifications();
 
 	private static int ticksUntilRest = TICKS_BETWEEN_BREAK;
@@ -33,7 +36,7 @@ public class EyestrainModClient implements ClientModInitializer {
 
     @Override
 	public void onInitializeClient() {
-		Config.load();
+//		Config.load();
 
 		HudElementRegistry.addLast(Identifier.fromNamespaceAndPath(EyestrainMod.MOD_ID, "hud_prompt"), HudPrompt.render());
 		HudElementRegistry.addLast(Identifier.fromNamespaceAndPath(EyestrainMod.MOD_ID, "hud_indicator"), HudIndicator.render());
@@ -53,9 +56,12 @@ public class EyestrainModClient implements ClientModInitializer {
 			int newSecondCount = Mth.ceil(((double) restTicksRemaining / 20));
 
 			if (client.player != null && newSecondCount != displayedSecondCount) {
-                Component restMessage = Component.literal(String.format("Rest your eyes for another: %ds", newSecondCount))
+				String breakKey = Objects.requireNonNull(KeyMapping.get("key.eyestrain-mod.break_key")).getTranslatedKeyMessage().getString();
+
+                Component restMessage = Component.literal("Rest your eyes for another: ")
+						.append(Component.literal(newSecondCount + "s").withStyle(ChatFormatting.GREEN))
 						.append("\n")
-						.append(Objects.requireNonNull(KeyMapping.get("key.eyestrain-mod.break_key")).getTranslatedKeyMessage())
+						.append(Component.literal(breakKey).withStyle(ChatFormatting.GOLD))
 						.append(": CANCEL");
 
                 HudPromptState.showPrompt(restMessage, 1, !HudPromptState.isActive(), false);
@@ -82,10 +88,13 @@ public class EyestrainModClient implements ClientModInitializer {
 			if (ticksUntilRest == 0) {
 				restTicksRemaining = REST_TICKS;
 
+				String breakKey = Objects.requireNonNull(KeyMapping.get("key.eyestrain-mod.break_key")).getTranslatedKeyMessage().getString();
+				String snoozeKey = Objects.requireNonNull(KeyMapping.get("key.eyestrain-mod.snooze_key")).getTranslatedKeyMessage().getString();
+
 				Component restMessage = Component.literal("You can start the eye break now!\n")
-						.append(Objects.requireNonNull(KeyMapping.get("key.eyestrain-mod.break_key")).getTranslatedKeyMessage())
-						.append(": START      ")
-						.append(Objects.requireNonNull(KeyMapping.get("key.eyestrain-mod.snooze_key")).getTranslatedKeyMessage())
+						.append(Component.literal(breakKey).withStyle(ChatFormatting.GOLD))
+						.append(": START    ")
+						.append(Component.literal(snoozeKey).withStyle(ChatFormatting.GOLD))
 						.append(": SKIP");
 
 				if (!Objects.equals(HudPromptState.getContent(), restMessage)) HudPromptState.showPrompt(restMessage, 5, true, true);
@@ -118,6 +127,7 @@ public class EyestrainModClient implements ClientModInitializer {
 		if (breakInitiated) {
 			breakInitiated = false;
 			restTicksRemaining = 0;
+			displayedSecondCount = 0;
 			ticksUntilRest = TICKS_BETWEEN_BREAK;
 
 			HudPromptState.showPrompt(Component.literal("Eye break cancelled."), 5, false, true);
