@@ -52,4 +52,12 @@ public class HudPromptState {
     public static boolean isActive() {
         return active;
     }
+
+    /**
+     * Change the prompt that is currently being shown to the user (without animations or changing the duration)
+     * @param prompt the new Component message to show
+     */
+    public static void changePrompt(Component prompt) {
+        content = prompt;
+    }
 }

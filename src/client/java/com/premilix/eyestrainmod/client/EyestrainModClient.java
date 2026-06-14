@@ -52,16 +52,18 @@ public class EyestrainModClient implements ClientModInitializer {
 
 			int newSecondCount = Mth.ceil(((double) restTicksRemaining / 20));
 
+			if (restTicksRemaining == REST_TICKS) {
+				Component restMessage = createRestMessage(newSecondCount);
+
+				// initialize the prompt for the entire break duration to be able to track the animation status
+				HudPromptState.showPrompt(restMessage, newSecondCount, !HudPromptState.isActive(), false);
+			}
+
 			if (client.player != null && newSecondCount != displayedSecondCount) {
-				MutableComponent breakKey = EyestrainModKeyMappingsClient.BREAK_KEY.getTranslatedKeyMessage().copy();
+				Component restMessage = createRestMessage(newSecondCount);
 
-                Component restMessage = Component.translatable("eyestrain-mod.text.rest_eyes_for")
-						.append(Component.translatable("eyestrain-mod.text.var_seconds", newSecondCount).withStyle(ChatFormatting.GREEN))
-						.append("\n")
-						.append(breakKey.withStyle(ChatFormatting.GOLD))
-						.append(Component.translatable("eyestrain-mod.text.cancel"));
-
-                HudPromptState.showPrompt(restMessage, 1, !HudPromptState.isActive(), false);
+				// only update the prompt without animation
+				HudPromptState.changePrompt(restMessage);
 
 				displayedSecondCount = newSecondCount;
 
@@ -101,6 +103,16 @@ public class EyestrainModClient implements ClientModInitializer {
 
 			}
 		}
+	}
+
+	private static Component createRestMessage(int newSecondCount) {
+		MutableComponent breakKey = EyestrainModKeyMappingsClient.BREAK_KEY.getTranslatedKeyMessage().copy();
+
+		return Component.translatable("eyestrain-mod.text.rest_eyes_for")
+				.append(Component.translatable("eyestrain-mod.text.var_seconds", newSecondCount).withStyle(ChatFormatting.GREEN))
+				.append("\n")
+				.append(breakKey.withStyle(ChatFormatting.GOLD))
+				.append(Component.translatable("eyestrain-mod.text.cancel"));
 	}
 
 	private void notifyPlayer(@NotNull Minecraft client, SoundEvent sound, float volume) {

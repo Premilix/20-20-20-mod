@@ -42,13 +42,21 @@ public class HudPrompt {
 
             int backgroundColor = ARGB.color(Math.min(alpha, 0.75f), 0x28344f); // dark blue
             int dividerColor = ARGB.color(alpha, 0x3EA6FF); // bright cyan
+            int trackColor = ARGB.color(alpha, 0x486FAD); // muddy cyan for the line behind the progress bar
             int textColor = ARGB.color(alpha, 0xFFFFFF); // white
 
+            // background box
 			graphics.fill(actualX, actualY, actualX + boxWidth, actualY + boxHeight, backgroundColor);
 
+            // divider line
             int dividerHeight = 2;
             int dividerY = actualY + paddingY + client.font.lineHeight + linePadding/2;
-            graphics.fill(actualX, dividerY, actualX + boxWidth, dividerY + dividerHeight, dividerColor);
+            int span = boxWidth - (int)(getTotalSmoothedProgress(exactTick) * boxWidth);
+
+            // divider track
+            graphics.fill(actualX, dividerY, actualX + boxWidth, dividerY + dividerHeight, trackColor);
+            // moving progress bar
+            graphics.fill(actualX, dividerY, actualX + span, dividerY + dividerHeight, dividerColor);
 
             int currentY = actualY + paddingY;
 
@@ -60,7 +68,7 @@ public class HudPrompt {
             graphics.text(client.font, line, startX, currentY, textColor, false);
 
             // right-aligned text
-            currentY += client.font.lineHeight + linePadding + dividerHeight + 1;
+            currentY += client.font.lineHeight + linePadding + dividerHeight + 2;
             line = lines.size() > 1 ? lines.get(1) : FormattedCharSequence.EMPTY;
             textWidth = client.font.width(line);
             startX = actualX + boxWidth - textWidth - paddingX;
@@ -75,6 +83,11 @@ public class HudPrompt {
         };
     }
 
+    /**
+     * Get smoothed progress for the sliding animation across {@code HudPromptState.ANIM_DURATION_TICKS}
+     * @param exactTick exact tick in animation
+     * @return smoothed progress between 0 and 1
+     */
     private static float getSmoothedProgress(float exactTick) {
         float animationProgress = 1.0f;
 
@@ -85,6 +98,15 @@ public class HudPrompt {
         }
 
         return Mth.sin(animationProgress * (float)Math.PI / 2.0f);
+    }
+
+    /**
+     * Get smoothed progress across the entire duration for the divider line animation
+     * @param exactTick exact tick in animation
+     * @return smoothed progress between 0 and 1
+     */
+    private static float getTotalSmoothedProgress(float exactTick) {
+        return exactTick / HudPromptState.totalDurationTicks;
     }
 
 }
