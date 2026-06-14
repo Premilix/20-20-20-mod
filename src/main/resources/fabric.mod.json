@@ -22,6 +22,9 @@
 		"client": [
 			"com.premilix.eyestrainmod.client.EyestrainModClient",
 			"com.premilix.eyestrainmod.client.keymapping.EyestrainModKeyMappingsClient"
+		],
+		"modmenu": [
+			"com.premilix.eyestrainmod.client.config.modmenu.ModMenuCompat"
 		]
 	},
 	"mixins": [
