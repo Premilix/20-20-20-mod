@@ -1,12 +1,31 @@
 # 20 20 20 Mod
 
+## Table of contents
+
+<!-- TOC -->
+* [Description](#description)
+* [Features](#features)
+* [License](#license)
+<!-- TOC -->
+
 ## Description
 
-This simple mod helps you follow the 20 20 20 rule for reducing eyestrain while playing Minecraft! It reminds you to relax your eyes by looking into the distance for 20 seconds every 20 minutes (configurable).
+This simple mod helps you follow the 20 20 20 rule for reducing eyestrain while playing Minecraft! 
+It reminds you to relax your eyes by looking into the distance for 20 seconds 
+every 20 minutes (configurable).
 
-## Planned features
+## Features
 
-- HUD divider showing the actual progress.
+- Toggleable sound effects for the break indicators
+
+- Configurable eye rest duration
+- Configurable interval between breaks
+- Configurable keybinds for interacting with the mod
+- Vanilla style configuration screen compatible with ModMenu
+- HUD prompts guiding eye breaks with a progress bar 
+(with a modern look inspired by 'Overwatch' and 'Hyperium client')
+- Persistent pulsing indicator when you should take a break
+- Break 'snoozing'/skipping functionality
 
 ## License
 
