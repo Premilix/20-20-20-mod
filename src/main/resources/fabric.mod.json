@@ -16,9 +16,6 @@
 	"icon": "assets/eyestrain-mod/icon.png",
 	"environment": "client",
 	"entrypoints": {
-		"main": [
-			"com.premilix.eyestrainmod.EyestrainMod"
-		],
 		"client": [
 			"com.premilix.eyestrainmod.client.EyestrainModClient",
 			"com.premilix.eyestrainmod.client.keymapping.EyestrainModKeyMappingsClient"
@@ -27,16 +24,9 @@
 			"com.premilix.eyestrainmod.client.config.modmenu.ModMenuCompat"
 		]
 	},
-	"mixins": [
-		"eyestrain-mod.mixins.json",
-		{
-			"config": "eyestrain-mod.client.mixins.json",
-			"environment": "client"
-		}
-	],
 	"depends": {
 		"fabricloader": ">=0.19.2",
-		"minecraft": "~26.1.2",
+		"minecraft": "~26.1",
 		"java": ">=25",
 		"fabric-api": "*"
 	}
