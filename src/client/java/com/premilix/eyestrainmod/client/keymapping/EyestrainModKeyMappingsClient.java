@@ -53,9 +53,9 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
                boolean isControlPressed = GLFW.glfwGetKey(client.getWindow().handle(), GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS
                        || GLFW.glfwGetKey(client.getWindow().handle(), GLFW.GLFW_KEY_RIGHT_CONTROL) == GLFW.GLFW_PRESS;
 
-               if (!isControlPressed && !(client.screen instanceof ConfigScreen)) {
-                   client.setScreen(
-                           new ConfigScreen(Component.translatable("eyestrain-mod.config.title"), client.screen)
+               if (!isControlPressed && !(client.gui.screen() instanceof ConfigScreen)) {
+                   client.gui.setScreen(
+                           new ConfigScreen(Component.translatable("eyestrain-mod.config.title"), client.gui.screen())
                    );
                }
            }
