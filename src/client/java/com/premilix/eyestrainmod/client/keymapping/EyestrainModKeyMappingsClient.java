@@ -10,7 +10,6 @@ import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
 
 public class EyestrainModKeyMappingsClient implements ClientModInitializer {
     public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(
@@ -20,8 +19,8 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
     public static final KeyMapping OPEN_CONFIG_KEY = KeyMappingHelper.registerKeyMapping(
             new KeyMapping(
                     "key.eyestrain-mod.open_config",
-                    InputConstants.Type.KEYSYM,
-                    GLFW.GLFW_KEY_J,
+                    InputConstants.Type.KEYBOARD,
+                    InputConstants.KEY_J,
                     CATEGORY
             )
     );
@@ -29,8 +28,8 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
     public static final KeyMapping BREAK_KEY = KeyMappingHelper.registerKeyMapping(
             new KeyMapping(
                     "key.eyestrain-mod.break_key",
-                    InputConstants.Type.KEYSYM,
-                    GLFW.GLFW_KEY_Y,
+                    InputConstants.Type.KEYBOARD,
+                    InputConstants.KEY_Y,
                     CATEGORY
             )
     );
@@ -38,8 +37,8 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
     public static final KeyMapping SKIP_KEY = KeyMappingHelper.registerKeyMapping(
             new KeyMapping(
                     "key.eyestrain-mod.skip_key",
-                    InputConstants.Type.KEYSYM,
-                    GLFW.GLFW_KEY_N,
+                    InputConstants.Type.KEYBOARD,
+                    InputConstants.KEY_N,
                     CATEGORY
             )
     );
@@ -50,12 +49,12 @@ public class EyestrainModKeyMappingsClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
            while(OPEN_CONFIG_KEY.consumeClick()) {
                // avoid enabling narrator by checking Control keybind
-               boolean isControlPressed = GLFW.glfwGetKey(client.getWindow().handle(), GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS
-                       || GLFW.glfwGetKey(client.getWindow().handle(), GLFW.GLFW_KEY_RIGHT_CONTROL) == GLFW.GLFW_PRESS;
+               boolean isControlPressed = InputConstants.isKeyDown(InputConstants.KEY_LCONTROL) ||
+                   InputConstants.isKeyDown(InputConstants.KEY_RCONTROL);
 
-               if (!isControlPressed && !(client.screen instanceof ConfigScreen)) {
-                   client.setScreen(
-                           new ConfigScreen(Component.translatable("eyestrain-mod.config.title"), client.screen)
+               if (!isControlPressed && !(client.gui.screen() instanceof ConfigScreen)) {
+                   client.gui.setScreen(
+                           new ConfigScreen(Component.translatable("eyestrain-mod.config.title"), client.gui.screen())
                    );
                }
            }
